@@ -84,6 +84,16 @@ const posts = (await getCollection('blog')).sort(
 					font-size: 1.563em;
 				}
 			}
+
+			main {
+				transition: opacity 0.4s ease;
+				}
+
+				@media (prefers-reduced-motion: no-preference) {
+				main[data-view-transition] {
+					opacity: 0;
+				}
+				}
 		</style>
 	</head>
 	<body>
@@ -94,7 +104,7 @@ const posts = (await getCollection('blog')).sort(
 					{
 						posts.map((post) => (
 							<li>
-								<a href={`/blog/${post.id}/`}>
+								<a href={`/blog/${post.id}/`} class="post-link">
 									{post.data.heroImage && (
 										<Image width={720} height={360} src={post.data.heroImage} alt="" />
 									)}
@@ -107,6 +117,28 @@ const posts = (await getCollection('blog')).sort(
 						))
 					}
 				</ul>
+
+				<script>
+					document.addEventListener("DOMContentLoaded", () => {
+						const links = document.querySelectorAll('a.post-link');
+
+						links.forEach(link => {
+						link.addEventListener("click", async (event) => {
+							event.preventDefault();
+							const href = link.href;
+
+							if (document.startViewTransition) {
+								await document.startViewTransition(async () => {
+									window.location.href = href;
+								});
+							} else {
+								window.location.href = href;
+							}
+						});
+						});
+					});
+				</script>
+
 			</section>
 		</main>
 		<Footer />
